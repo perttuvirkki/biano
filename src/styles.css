@@ -1,0 +1,74 @@
+/* styles.css */
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fafafa;
+  flex-direction: column;
+}
+
+.piano {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.piano-key {
+  height: 240px;
+  width: 60px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.piano-key:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.piano-key.black {
+  background-color: #5a5a5a;
+  color: white;
+  position: absolute;
+  height: 120px;
+  width: 40px;
+  z-index: 1;
+}
+
+.piano-key.black:hover {
+  background-color: #333;
+}
+
+.piano-key.white {
+  background-color: white;
+  color: black;
+  z-index: 0;
+  border-radius: 10px;
+}
+
+.piano-key.white:hover {
+  background-color: #ddd;
+}
+
+.chord-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover,
+  &:active {
+    background-color: #0056b3;
+  }
+}
