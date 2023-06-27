@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
+import ChordLooper from "./components/ChordLooper";
 import { Chord, transpose } from "tonal";
 import "./styles.css";
 
@@ -9,6 +10,12 @@ const App = () => {
   const [highlightedChord, setHighlightedChord] = useState([]);
   const [startingOctave, setStartingOctave] = useState(3);
   const [numberOfOctaves, setNumberOfOctaves] = useState(1);
+  const [chordPlayerSettings, setChordPlayerSettings] = useState([
+    { chordRoot: "C", chordType: "maj" },
+    { chordRoot: "G", chordType: "maj" },
+    { chordRoot: "A", chordType: "maj" },
+    { chordRoot: "E", chordType: "maj" },
+  ]);
 
   function flatToSharp(note) {
     return note
@@ -28,6 +35,12 @@ const App = () => {
     setHighlightedChord(chordNotes);
   };
 
+  const handleChordChange = (index, newSettings) => {
+    const newChordPlayerSettings = [...chordPlayerSettings];
+    newChordPlayerSettings[index] = newSettings;
+    setChordPlayerSettings(newChordPlayerSettings);
+  };
+
   return (
     <div className="app">
       <Piano
@@ -36,11 +49,23 @@ const App = () => {
         startingOctave={startingOctave}
       />
       <div className="chord-players-container">
-        <ChordPlayer onPlayChord={handlePlayChord} octave="3" />
-        <ChordPlayer onPlayChord={handlePlayChord} octave="3" />
-        <ChordPlayer onPlayChord={handlePlayChord} octave="3" />
-        <ChordPlayer onPlayChord={handlePlayChord} octave="3" />
+        {chordPlayerSettings.map((settings, index) => (
+          <ChordPlayer
+            {...settings}
+            octave="3"
+            onPlayChord={handlePlayChord}
+            onChordChange={(newSettings) =>
+              handleChordChange(index, newSettings)
+            }
+            key={index}
+          />
+        ))}
       </div>
+      <ChordLooper
+        onPlayChord={handlePlayChord}
+        octave="3"
+        chords={chordPlayerSettings}
+      />
 
       <div>
         Starting Octave:

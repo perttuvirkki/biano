@@ -2,16 +2,20 @@
 import React, { useState } from "react";
 import SoundEngine from "./SoundEngine";
 
-const ChordPlayer = ({ octave, onPlayChord }) => {
+const ChordPlayer = ({
+  chordRoot,
+  chordType,
+  octave,
+  onPlayChord,
+  onChordChange,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [chordRoot, setChordRoot] = useState("C"); // default chord root
-  const [chordType, setChordType] = useState("maj"); // default chord type
 
   // Available chord roots and types
   const chordRoots = ["C", "D", "E", "F", "G", "A", "B"];
   const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7"];
 
-  const handleClick = () => {
+  const playChord = () => {
     const chordName = chordRoot + chordType;
     setIsPlaying(true);
     SoundEngine.playChord(chordName, octave);
@@ -19,12 +23,16 @@ const ChordPlayer = ({ octave, onPlayChord }) => {
     setTimeout(() => setIsPlaying(false), 1000); // Reset after 1 second
   };
 
+  const handleClick = () => {
+    playChord();
+  };
+
   const handleChordRootChange = (event) => {
-    setChordRoot(event.target.value);
+    onChordChange({ chordRoot: event.target.value, chordType });
   };
 
   const handleChordTypeChange = (event) => {
-    setChordType(event.target.value);
+    onChordChange({ chordRoot, chordType: event.target.value });
   };
 
   return (
