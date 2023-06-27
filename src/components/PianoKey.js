@@ -1,20 +1,30 @@
-// PianoKey.js
-import React from "react";
-import useSound from "use-sound";
+import React, { useState } from "react";
+import SoundEngine from "./SoundEngine";
 
-const PianoKey = ({ note, isBlack, keyIndex }) => {
-  const file = require(`../piano-mp3/${note}.mp3`);
-  const [play] = useSound(file, { volume: 1 });
+const PianoKey = ({ noteImport, isBlack, keyIndex, isHighlighted }) => {
+  const [isActive, setIsActive] = useState(false);
+
+  const handleMouseDown = () => {
+    setIsActive(true);
+    SoundEngine.playNote(noteImport);
+  };
+
+  const handleMouseUp = () => {
+    setIsActive(false);
+  };
 
   return (
     <button
-      onMouseDown={play}
-      className={`piano-key ${isBlack ? "black" : "white"}`}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      className={`piano-key ${isBlack ? "black" : "white"} ${
+        isHighlighted ? "highlighted" : ""
+      } ${isActive ? "active" : ""}`}
       style={{
         left: `${isBlack ? keyIndex * 60 + 60 : keyIndex * 60}px`,
       }}
     >
-      {note}
+      {noteImport}
     </button>
   );
 };

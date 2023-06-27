@@ -2,39 +2,49 @@
 import React from "react";
 import PianoKey from "./PianoKey";
 
-const notes = [
-  "C4",
-  "Db4",
-  "D4",
-  "Eb4",
-  "E4",
-  "F4",
-  "Gb4",
-  "G4",
-  "Ab4",
-  "A4",
-  "Bb4",
-  "B4",
-];
+const Piano = ({ highlightedChord, numberOfOctaves, startingOctave }) => {
+  const octaves = [...Array(numberOfOctaves).keys()]
+    .map((n) => n + startingOctave)
+    .filter((octave) => octave >= 1 && octave <= 6);
+  const notes = [
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B",
+  ];
 
-const Piano = () => {
+  const getFullNote = (note, octave) => `${note}${octave}`;
+
   let whiteKeyIndex = 0;
 
   return (
     <div className="piano">
-      {notes.map((note, index) => {
-        const isBlack = note.includes("b");
-        if (!isBlack) {
-          whiteKeyIndex++;
-        }
-        return (
-          <PianoKey
-            note={note}
-            isBlack={isBlack}
-            keyIndex={isBlack ? whiteKeyIndex - 1 : whiteKeyIndex}
-          />
-        );
-      })}
+      {octaves.map((octave) =>
+        notes.map((note, index) => {
+          const isBlack = note.includes("#");
+          if (!isBlack) {
+            whiteKeyIndex++;
+          }
+          return (
+            <PianoKey
+              noteImport={getFullNote(note, octave)}
+              isBlack={isBlack}
+              keyIndex={isBlack ? whiteKeyIndex - 1 : whiteKeyIndex}
+              isHighlighted={highlightedChord.includes(
+                getFullNote(note, octave)
+              )}
+            />
+          );
+        })
+      )}
     </div>
   );
 };
