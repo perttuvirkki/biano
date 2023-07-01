@@ -1,5 +1,5 @@
 import { Howl } from "howler";
-import { Note, transpose, Chord } from "tonal";
+import { Note } from "tonal";
 
 // Sound setup...
 const lengthOfNote = 2500; // adjust to the length of each note in milliseconds
@@ -21,17 +21,24 @@ const SoundEngine = {
     let spriteName = `Note${Note.midi(note)}`;
     sound.play(spriteName);
   },
-  playChord: (chordSymbol, octave) => {
-    const baseNote = chordSymbol.charAt(0);
-    const { intervals } = Chord.get(chordSymbol);
-    const chordNotes = intervals.map((interval) =>
-      transpose(`${baseNote}${octave}`, interval)
-    );
-    console.log(chordNotes);
-
-    chordNotes.forEach((note) => {
+  playChord: (notesInChord) => {
+    notesInChord.forEach((note) => {
       SoundEngine.playNote(note);
     });
+  },
+  playArpeggio: (notesInChord, tempo) => {
+    const delay = 60000 / (notesInChord.length + 1) / tempo; // Add 1 to the length for the extra note
+    notesInChord.forEach((note, index) => {
+      setTimeout(() => {
+        SoundEngine.playNote(note);
+      }, index * delay);
+    });
+
+    // Play the middle note again after the last note
+    const middleNoteIndex = Math.floor(notesInChord.length / 2);
+    setTimeout(() => {
+      SoundEngine.playNote(notesInChord[middleNoteIndex]);
+    }, notesInChord.length * delay);
   },
 };
 

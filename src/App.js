@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
 import ChordLooper from "./components/ChordLooper";
-import { Chord, transpose } from "tonal";
 import "./styles.css";
 
 const App = () => {
@@ -12,9 +11,9 @@ const App = () => {
   const [numberOfOctaves, setNumberOfOctaves] = useState(1);
   const [chordPlayerSettings, setChordPlayerSettings] = useState([
     { chordRoot: "C", chordType: "maj" },
+    { chordRoot: "F", chordType: "maj" },
+    { chordRoot: "A", chordType: "min" },
     { chordRoot: "G", chordType: "maj" },
-    { chordRoot: "A", chordType: "maj" },
-    { chordRoot: "E", chordType: "maj" },
   ]);
 
   function flatToSharp(note) {
@@ -26,13 +25,18 @@ const App = () => {
       .replace(/Bb/g, "A#");
   }
 
-  const handlePlayChord = (chordName, octave) => {
-    const baseNote = chordName.charAt(0);
-    const { intervals } = Chord.get(chordName);
-    const chordNotes = intervals.map((interval) =>
-      flatToSharp(transpose(`${baseNote}${octave}`, interval))
-    );
-    setHighlightedChord(chordNotes);
+  // const handlePlayChord = (chordName, octave) => {
+  //   const baseNote = chordName.charAt(0);
+  //   const { intervals } = Chord.get(chordName);
+  //   const chordNotes = intervals.map((interval) =>
+  //     flatToSharp(transpose(`${baseNote}${octave}`, interval))
+  //   );
+  //   setHighlightedChord(chordNotes);
+  // };
+
+  const handlePlayChord = (notes) => {
+    const transformedNotes = notes.map(flatToSharp);
+    setHighlightedChord(transformedNotes);
   };
 
   const handleChordChange = (index, newSettings) => {

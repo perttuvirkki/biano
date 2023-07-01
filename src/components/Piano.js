@@ -35,6 +35,7 @@ const Piano = ({ highlightedChord, numberOfOctaves, startingOctave }) => {
           }
           return (
             <PianoKey
+              key={note + index}
               noteImport={getFullNote(note, octave)}
               isBlack={isBlack}
               keyIndex={isBlack ? whiteKeyIndex - 1 : whiteKeyIndex}

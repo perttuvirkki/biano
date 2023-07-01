@@ -1,5 +1,5 @@
-// ChordPlayer.js
 import React, { useState } from "react";
+import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
 
 const ChordPlayer = ({
@@ -16,11 +16,17 @@ const ChordPlayer = ({
   const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7"];
 
   const playChord = () => {
-    const chordName = chordRoot + chordType;
+    const chordName = `${chordRoot}${chordType}`;
     setIsPlaying(true);
-    SoundEngine.playChord(chordName, octave);
-    onPlayChord(chordName, octave);
-    setTimeout(() => setIsPlaying(false), 1000); // Reset after 1 second
+
+    const { intervals } = Chord.get(chordName);
+    const notesInChord = intervals.map((interval) =>
+      transpose(`${chordRoot}${octave}`, interval)
+    );
+
+    SoundEngine.playChord(notesInChord, octave);
+    onPlayChord(notesInChord);
+    setTimeout(() => setIsPlaying(false), 2000); // Reset after 1 second
   };
 
   const handleClick = () => {
@@ -66,7 +72,7 @@ const ChordPlayer = ({
         onClick={handleClick}
         className={`chord-button ${isPlaying ? "playing" : ""}`}
       >
-        {`${chordRoot}${chordType}`}
+        {chordType === "maj" ? chordRoot : `${chordRoot}${chordType}`}
       </button>
     </div>
   );
