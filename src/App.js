@@ -38,6 +38,7 @@ const App = () => {
 
   useEffect(() => {
     if (isPlaying) {
+      Tone.start();
       Tone.Transport.bpm.value = tempoRef.current; // Use the ref instead of the state
       console.log(tempoRef);
 
