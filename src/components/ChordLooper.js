@@ -29,7 +29,6 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
 
   useEffect(() => {
     if (isPlaying) {
-      Tone.Transport.start();
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
@@ -38,6 +37,7 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
 
   const handleClick = () => {
     Tone.Transport.bpm.value = tempo;
+    Tone.Transport.start();
     Tone.Transport.scheduleRepeat(playNextChord, "1m");
 
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
