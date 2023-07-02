@@ -3,18 +3,28 @@ import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
 import * as Tone from "tone";
 
-const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [tempo, setTempo] = useState(120);
+const ChordLooper = ({
+  chords,
+  onPlayChord,
+  octave,
+  setCurrentBeat,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const chordIndexRef = useRef(0); // Use a ref instead of state
+  const chordsRef = useRef(chords); // Create a ref for the chords state
+
+  useEffect(() => {
+    chordsRef.current = chords; // Update the ref whenever chords changes
+  }, [chords]);
 
   const playNextChord = () => {
-    if (!chords[chordIndexRef.current]) {
+    if (!chordsRef.current[chordIndexRef.current]) {
       return;
     }
     setCurrentBeat(chordIndexRef.current);
 
-    const { chordRoot, chordType } = chords[chordIndexRef.current];
+    const { chordRoot, chordType } = chordsRef.current[chordIndexRef.current]; // Use the ref instead of the state
     const chordName = `${chordRoot}${chordType}`;
 
     const { intervals } = Chord.get(chordName);
@@ -24,11 +34,13 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
     SoundEngine.playChord(notesInChord, octave);
 
     onPlayChord(notesInChord);
-    chordIndexRef.current = (chordIndexRef.current + 1) % chords.length; // Update the ref
+    chordIndexRef.current =
+      (chordIndexRef.current + 1) % chordsRef.current.length; // Use the ref instead of the state
   };
 
   useEffect(() => {
     if (isPlaying) {
+      Tone.Transport.scheduleRepeat(playNextChord, "1m");
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
@@ -36,16 +48,7 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
   }, [isPlaying]);
 
   const handleClick = () => {
-    Tone.start();
-    Tone.Transport.start();
-    Tone.Transport.bpm.value = tempo;
-    Tone.Transport.scheduleRepeat(playNextChord, "1m");
-
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
-  };
-
-  const handleTempoChange = (event) => {
-    setTempo(event.target.value);
   };
 
   return (
@@ -53,14 +56,6 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
       <button onClick={handleClick}>
         {isPlaying ? "Stop Loop" : "Start Loop"}
       </button>
-      <input
-        type="range"
-        min="60"
-        max="180"
-        value={tempo}
-        onChange={handleTempoChange}
-      />
-      <span>{tempo} BPM</span>
     </div>
   );
 };

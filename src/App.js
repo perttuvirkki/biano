@@ -1,9 +1,11 @@
-// App.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import * as Tone from "tone";
+
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
 import ChordLooper from "./components/ChordLooper";
 import ProgressBar from "./components/ProgressBar";
+import DrumMachine from "./components/DrumMachine";
 import "./styles.css";
 
 const App = () => {
@@ -17,6 +19,9 @@ const App = () => {
     { chordRoot: "G", chordType: "maj" },
   ]);
   const [currentBeat, setCurrentBeat] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [tempo, setTempo] = useState(120);
+  const tempoRef = useRef(tempo); // Create a ref for the tempo state
 
   function flatToSharp(note) {
     return note
@@ -27,14 +32,21 @@ const App = () => {
       .replace(/Bb/g, "A#");
   }
 
-  // const handlePlayChord = (chordName, octave) => {
-  //   const baseNote = chordName.charAt(0);
-  //   const { intervals } = Chord.get(chordName);
-  //   const chordNotes = intervals.map((interval) =>
-  //     flatToSharp(transpose(`${baseNote}${octave}`, interval))
-  //   );
-  //   setHighlightedChord(chordNotes);
-  // };
+  useEffect(() => {
+    tempoRef.current = tempo; // Update the ref whenever tempo changes
+  }, [tempo]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      Tone.Transport.bpm.value = tempoRef.current; // Use the ref instead of the state
+      console.log(tempoRef);
+
+      Tone.Transport.start();
+    } else {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+    }
+  }, [isPlaying, tempoRef.current]); // Add tempoRef.current as a dependency
 
   const handlePlayChord = (notes) => {
     const transformedNotes = notes.map(flatToSharp);
@@ -47,8 +59,14 @@ const App = () => {
     setChordPlayerSettings(newChordPlayerSettings);
   };
 
+  const handleTempoChange = (event) => {
+    setTempo(event.target.value);
+  };
+
   return (
     <div className="app">
+      <DrumMachine isPlaying={isPlaying} />
+
       <ProgressBar
         currentBeat={currentBeat}
         totalBeats={chordPlayerSettings.length}
@@ -77,8 +95,18 @@ const App = () => {
         octave="3"
         chords={chordPlayerSettings}
         setCurrentBeat={setCurrentBeat}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        tempo={tempo}
       />
-
+      <input
+        type="range"
+        min="60"
+        max="180"
+        value={tempo}
+        onChange={handleTempoChange}
+      />
+      <span>{tempo} BPM</span>
       <div>
         Starting Octave:
         {[1, 2, 3, 4, 5, 6].map((octave) => (

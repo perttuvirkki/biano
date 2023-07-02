@@ -16,6 +16,15 @@ const sound = new Howl({
   sprite: sprite,
 });
 
+const drumSounds = new Howl({
+  src: ["./assets/drums-socal.mp3"],
+  sprite: {
+    bassDrum: [0, 2000],
+    snare: [2500, 2000],
+    hiHat: [5000, 2000],
+  },
+});
+
 const SoundEngine = {
   playNote: (note) => {
     let spriteName = `Note${Note.midi(note)}`;
@@ -39,6 +48,10 @@ const SoundEngine = {
     setTimeout(() => {
       SoundEngine.playNote(notesInChord[middleNoteIndex]);
     }, notesInChord.length * delay);
+  },
+
+  playDrumSound: (soundName) => {
+    drumSounds.play(soundName);
   },
 };
 
