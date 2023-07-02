@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
 import ChordLooper from "./components/ChordLooper";
+import ProgressBar from "./components/ProgressBar";
 import "./styles.css";
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
     { chordRoot: "A", chordType: "min" },
     { chordRoot: "G", chordType: "maj" },
   ]);
+  const [currentBeat, setCurrentBeat] = useState(0);
 
   function flatToSharp(note) {
     return note
@@ -47,6 +49,11 @@ const App = () => {
 
   return (
     <div className="app">
+      <ProgressBar
+        currentBeat={currentBeat}
+        totalBeats={chordPlayerSettings.length}
+      />
+
       <Piano
         highlightedChord={highlightedChord}
         numberOfOctaves={numberOfOctaves}
@@ -69,6 +76,7 @@ const App = () => {
         onPlayChord={handlePlayChord}
         octave="3"
         chords={chordPlayerSettings}
+        setCurrentBeat={setCurrentBeat}
       />
 
       <div>

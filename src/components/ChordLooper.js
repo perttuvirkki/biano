@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
 import * as Tone from "tone";
 
-const ChordLooper = ({ chords, onPlayChord, octave }) => {
+const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [chordIndex, setChordIndex] = useState(0);
   const [tempo, setTempo] = useState(120);
+  const chordIndexRef = useRef(0); // Use a ref instead of state
 
   const playNextChord = () => {
-    if (!chords[chordIndex]) {
+    if (!chords[chordIndexRef.current]) {
       return;
     }
+    setCurrentBeat(chordIndexRef.current);
 
-    const { chordRoot, chordType } = chords[chordIndex];
+    const { chordRoot, chordType } = chords[chordIndexRef.current];
     const chordName = `${chordRoot}${chordType}`;
 
     const { intervals } = Chord.get(chordName);
@@ -21,11 +22,9 @@ const ChordLooper = ({ chords, onPlayChord, octave }) => {
       transpose(`${chordRoot}${octave}`, interval)
     );
     SoundEngine.playChord(notesInChord, octave);
-    //SoundEngine.playArpeggio(notesInChord, tempo);
 
     onPlayChord(notesInChord);
-    const nextChordIndex = (chordIndex + 1) % chords.length;
-    setChordIndex(nextChordIndex);
+    chordIndexRef.current = (chordIndexRef.current + 1) % chords.length; // Update the ref
   };
 
   useEffect(() => {
@@ -39,7 +38,7 @@ const ChordLooper = ({ chords, onPlayChord, octave }) => {
 
   const handleClick = () => {
     Tone.Transport.bpm.value = tempo;
-    Tone.Transport.scheduleRepeat(playNextChord, "1m"); // '4n' stands for quarter note, which would be one beat at the given tempo.
+    Tone.Transport.scheduleRepeat(playNextChord, "1m");
 
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
   };
