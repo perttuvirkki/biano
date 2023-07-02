@@ -36,8 +36,8 @@ const ChordLooper = ({ chords, onPlayChord, octave, setCurrentBeat }) => {
   }, [isPlaying]);
 
   const handleClick = () => {
-    Tone.Transport.bpm.value = tempo;
     Tone.Transport.start();
+    Tone.Transport.bpm.value = tempo;
     Tone.Transport.scheduleRepeat(playNextChord, "1m");
 
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
