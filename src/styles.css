@@ -123,3 +123,18 @@
   background-color: #007bff;
   color: white;
 }
+
+.drum-progress-bar {
+  display: flex;
+}
+
+.drum-progress-bar .beat {
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background-color: gray;
+}
+
+.drum-progress-bar .beat.active {
+  background-color: blue;
+}

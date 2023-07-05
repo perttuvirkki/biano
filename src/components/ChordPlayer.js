@@ -11,9 +11,8 @@ const ChordPlayer = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Available chord roots and types
   const chordRoots = ["C", "D", "E", "F", "G", "A", "B"];
-  const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7"];
+  const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7", "6", "9"];
 
   const playChord = () => {
     const chordName = `${chordRoot}${chordType}`;
@@ -26,7 +25,7 @@ const ChordPlayer = ({
 
     SoundEngine.playChord(notesInChord, octave);
     onPlayChord(notesInChord);
-    setTimeout(() => setIsPlaying(false), 2000); // Reset after 1 second
+    setTimeout(() => setIsPlaying(false), 2000);
   };
 
   const handleClick = () => {

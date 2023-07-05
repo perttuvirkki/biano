@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import SoundEngine from "./SoundEngine";
+import DrumProgressBar from "./DrumPorgressBar";
 import * as Tone from "tone";
 
 const DrumMachine = ({ isPlaying }) => {
@@ -8,24 +9,24 @@ const DrumMachine = ({ isPlaying }) => {
     snare: Array(8).fill(false),
     hiHat: Array(8).fill(false),
   });
+  const [currentBeat, setCurrentBeat] = useState(0);
 
-  const beatMatrixRef = useRef(beatMatrix); // Create a ref for the beatMatrix state
+  const beatMatrixRef = useRef(beatMatrix);
 
   useEffect(() => {
-    beatMatrixRef.current = beatMatrix; // Update the ref whenever beatMatrix changes
+    beatMatrixRef.current = beatMatrix;
   }, [beatMatrix]);
 
-  const beatIndexRef = useRef(0); // Use a ref instead of state
+  const beatIndexRef = useRef(0);
 
   const playNextBeat = () => {
     for (const soundName in beatMatrixRef.current) {
-      // Use the ref instead of the state
       if (beatMatrixRef.current[soundName][beatIndexRef.current]) {
         SoundEngine.playDrumSound(soundName);
       }
     }
-
-    beatIndexRef.current = (beatIndexRef.current + 1) % 8; // Update the ref
+    setCurrentBeat(beatIndexRef.current);
+    beatIndexRef.current = (beatIndexRef.current + 1) % 8;
   };
 
   useEffect(() => {
@@ -65,6 +66,7 @@ const DrumMachine = ({ isPlaying }) => {
           ))}
         </div>
       ))}
+      <DrumProgressBar currentBeat={currentBeat} />
     </div>
   );
 };

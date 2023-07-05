@@ -68,11 +68,6 @@ const App = () => {
     <div className="app">
       <DrumMachine isPlaying={isPlaying} />
 
-      <ProgressBar
-        currentBeat={currentBeat}
-        totalBeats={chordPlayerSettings.length}
-      />
-
       <Piano
         highlightedChord={highlightedChord}
         numberOfOctaves={numberOfOctaves}
@@ -91,6 +86,10 @@ const App = () => {
           />
         ))}
       </div>
+      <ProgressBar
+        currentBeat={currentBeat}
+        totalBeats={chordPlayerSettings.length}
+      />
       <ChordLooper
         onPlayChord={handlePlayChord}
         octave="3"
@@ -98,7 +97,7 @@ const App = () => {
         setCurrentBeat={setCurrentBeat}
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
-        tempo={tempo}
+        tempo={tempoRef.current}
       />
       <input
         type="range"
