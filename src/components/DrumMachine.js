@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SoundEngine from "./SoundEngine";
-import DrumProgressBar from "./DrumPorgressBar";
+import DrumProgressBar from "./DrumProgressBar";
 import * as Tone from "tone";
+import { setDrumCurrentBeat } from "../redux/slices/drumCurrentBeatSlice";
 
-const DrumMachine = ({ isPlaying }) => {
+const DrumMachine = () => {
+  const dispatch = useDispatch();
+  const isPlaying = useSelector((state) => state.isPlaying);
+  const [beatCount, setBeatCount] = useState(8);
   const [beatMatrix, setBeatMatrix] = useState({
-    bassDrum: Array(8).fill(false),
-    snare: Array(8).fill(false),
-    hiHat: Array(8).fill(false),
+    bassDrum: Array(beatCount).fill(false),
+    snare: Array(beatCount).fill(false),
+    hiHat: Array(beatCount).fill(false),
   });
-  const [currentBeat, setCurrentBeat] = useState(0);
 
   const beatMatrixRef = useRef(beatMatrix);
 
@@ -25,18 +29,21 @@ const DrumMachine = ({ isPlaying }) => {
         SoundEngine.playDrumSound(soundName);
       }
     }
-    setCurrentBeat(beatIndexRef.current);
-    beatIndexRef.current = (beatIndexRef.current + 1) % 8;
+    dispatch(setDrumCurrentBeat(beatIndexRef.current));
+    beatIndexRef.current = (beatIndexRef.current + 1) % beatCount;
   };
 
   useEffect(() => {
     if (isPlaying) {
-      Tone.Transport.scheduleRepeat(playNextBeat, "4n");
+      Tone.Transport.scheduleRepeat(
+        playNextBeat,
+        beatCount === 8 ? "4n" : "8n"
+      );
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
     }
-  }, [isPlaying]);
+  }, [isPlaying, beatCount]);
 
   const toggleBeat = (soundName, beat) => {
     setBeatMatrix((prevMatrix) => ({
@@ -45,10 +52,27 @@ const DrumMachine = ({ isPlaying }) => {
         i === beat ? !isOn : isOn
       ),
     }));
+
+    if (!beatMatrix[soundName][beat]) {
+      SoundEngine.playDrumSound(soundName);
+    }
+  };
+
+  const switchBeatCount = () => {
+    const newBeatCount = beatCount === 8 ? 16 : 8;
+    setBeatCount(newBeatCount);
+    setBeatMatrix({
+      bassDrum: Array(newBeatCount).fill(false),
+      snare: Array(newBeatCount).fill(false),
+      hiHat: Array(newBeatCount).fill(false),
+    });
   };
 
   return (
     <div>
+      <button onClick={switchBeatCount}>
+        Switch to {beatCount === 8 ? "16" : "8"} beats
+      </button>
       {["hiHat", "snare", "bassDrum"].map((soundName) => (
         <div key={soundName}>
           {soundName}
@@ -66,7 +90,7 @@ const DrumMachine = ({ isPlaying }) => {
           ))}
         </div>
       ))}
-      <DrumProgressBar currentBeat={currentBeat} />
+      <DrumProgressBar />
     </div>
   );
 };

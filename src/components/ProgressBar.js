@@ -1,4 +1,10 @@
-const ProgressBar = ({ currentBeat, totalBeats }) => {
+import React from "react";
+import { useSelector } from "react-redux";
+
+const ProgressBar = () => {
+  const currentBeat = useSelector((state) => state.currentBeat);
+  const totalBeats = useSelector((state) => state.chordPlayerSettings.length);
+
   return (
     <div style={{ display: "flex" }}>
       {Array.from({ length: totalBeats }, (_, i) => (

@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
+import { useSelector } from "react-redux";
 import SoundEngine from "./SoundEngine";
 
-const PianoKey = ({ noteImport, isBlack, keyIndex, isHighlighted }) => {
+const PianoKey = forwardRef(({ noteImport, isBlack, keyIndex }, ref) => {
   const [isActive, setIsActive] = useState(false);
+  const highlightedChord = useSelector((state) => state.highlightedChord);
+  const isHighlighted = highlightedChord.includes(noteImport);
 
   const handleMouseDown = () => {
     setIsActive(true);
@@ -23,10 +26,15 @@ const PianoKey = ({ noteImport, isBlack, keyIndex, isHighlighted }) => {
       style={{
         left: `${isBlack ? keyIndex * 60 + 60 : keyIndex * 60}px`,
       }}
+      ref={ref}
     >
-      {noteImport}
+      <span style={{ position: "relative", bottom: "-40%" }}>
+        {noteImport.startsWith("C") && !noteImport.includes("#")
+          ? noteImport
+          : ""}
+      </span>
     </button>
   );
-};
+});
 
 export default PianoKey;

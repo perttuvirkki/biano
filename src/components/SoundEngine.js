@@ -1,5 +1,8 @@
 import { Howl } from "howler";
 import { Note } from "tonal";
+import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
+import { Sampler, start } from "tone";
+import * as Tone from "tone";
 
 const lengthOfNote = 2500;
 let timeIndex = 0;
@@ -15,49 +18,98 @@ const sound = new Howl({
   sprite: sprite,
 });
 
-const drumSounds = new Howl({
-  src: ["./assets/drums-socal.mp3"],
-  sprite: {
-    bassDrum: [0, 2000],
-    snare: [2500, 2000],
-    hiHat: [5000, 2000],
-  },
-});
+const drumSounds = {
+  bassDrum: new Sampler({
+    urls: {
+      C4: "./assets/bassdrum.mp3",
+    },
+  }),
+  snare: new Sampler({
+    urls: {
+      C4: "./assets/snare.mp3",
+    },
+  }),
+  hiHat: new Sampler({
+    urls: {
+      C4: "./assets/hihat.mp3",
+    },
+  }),
+};
 
 const SoundEngine = {
   playNote: (note) => {
     let spriteName = `Note${Note.midi(note)}`;
     sound.play(spriteName);
   },
-  playChord: (notesInChord) => {
+  playChord: (notesInChord, dispatch) => {
+    dispatch(setHighlightedChord(notesInChord));
     notesInChord.forEach((note) => {
       SoundEngine.playNote(note);
     });
   },
-  playArpeggio: (notesInChord, tempo) => {
+  playArpeggio: (notesInChord, tempo, dispatch) => {
     const beatDurationInMilliseconds = (60000 / tempo) * 2; // Duration of a beat in milliseconds
     let delay = 0;
     if (notesInChord.length === 4) {
-      delay = beatDurationInMilliseconds / (notesInChord.length - 1.5); // Delay between each note
+      delay = beatDurationInMilliseconds / (notesInChord.length - 1); // Delay between each note
     } else {
       delay = beatDurationInMilliseconds / (notesInChord.length - 1); // Delay between each note
     }
 
-    console.log(delay);
     notesInChord.forEach((note, index) => {
       setTimeout(() => {
         SoundEngine.playNote(note);
       }, index * delay);
     });
+    dispatch(setHighlightedChord(notesInChord));
 
-    const middleNoteIndex = Math.floor(notesInChord.length / 2);
     setTimeout(() => {
-      SoundEngine.playNote(notesInChord[middleNoteIndex]);
+      SoundEngine.playNote(notesInChord[notesInChord.length - 2]);
     }, notesInChord.length * delay);
+    setTimeout(() => {
+      SoundEngine.playNote(notesInChord[notesInChord.length - 3]);
+    }, (notesInChord.length + 1) * delay);
+  },
+
+  playInvertedChord: (notesInChord, dispatch) => {
+    const invertedChord = [...notesInChord];
+
+    const random = Math.random();
+    let noteToModify;
+
+    if (random < 0.33) {
+      // 1/3 chance to not mutate the chord
+      noteToModify = null;
+    } else if (random < 0.66) {
+      // 1/3 chance to transpose the second note up by one octave
+      noteToModify = 1;
+    } else {
+      // 1/3 chance to transpose the last note down by one octave
+      noteToModify = 3;
+    }
+
+    if (noteToModify !== null) {
+      const note = invertedChord[noteToModify].slice(0, -1);
+      let octave = parseInt(invertedChord[noteToModify].slice(-1));
+
+      if (noteToModify === 1) {
+        octave += 1;
+      } else if (noteToModify === 3) {
+        octave -= 1;
+      }
+
+      invertedChord[noteToModify] = `${note}${octave}`;
+    }
+
+    dispatch(setHighlightedChord(invertedChord));
+
+    invertedChord.forEach((note) => {
+      SoundEngine.playNote(note);
+    });
   },
 
   playDrumSound: (soundName) => {
-    drumSounds.play(soundName);
+    drumSounds[soundName].triggerAttackRelease("C4", "4n").toDestination();
   },
 };
 

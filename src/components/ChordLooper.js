@@ -1,29 +1,33 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
 import * as Tone from "tone";
+import { setCurrentBeat } from "../redux/slices/currentBeatSlice";
+import { setIsPlaying } from "../redux/slices/isPlayingSlice";
 
-const ChordLooper = ({
-  chords,
-  onPlayChord,
-  octave,
-  setCurrentBeat,
-  isPlaying,
-  setIsPlaying,
-  tempo,
-}) => {
+const ChordLooper = () => {
+  const dispatch = useDispatch();
+  const chords = useSelector((state) => state.chordPlayerSettings);
+  const isPlaying = useSelector((state) => state.isPlaying);
+  const tempo = useSelector((state) => state.tempo);
+  const [playMethod, setPlayMethod] = useState("playChord");
+
   const chordIndexRef = useRef(0);
   const chordsRef = useRef(chords);
+  const tempoRef = useRef(tempo);
+  const octave = 4;
 
   useEffect(() => {
     chordsRef.current = chords;
-  }, [chords]);
+    tempoRef.current = tempo;
+  }, [chords, tempo]);
 
   const playNextChord = () => {
     if (!chordsRef.current[chordIndexRef.current]) {
       return;
     }
-    setCurrentBeat(chordIndexRef.current);
+    dispatch(setCurrentBeat(chordIndexRef.current));
 
     const { chordRoot, chordType } = chordsRef.current[chordIndexRef.current];
     const chordName = `${chordRoot}${chordType}`;
@@ -32,18 +36,31 @@ const ChordLooper = ({
     const notesInChord = intervals.map((interval) =>
       transpose(`${chordRoot}${octave}`, interval)
     );
-    //SoundEngine.playChord(notesInChord);
-    SoundEngine.playArpeggio(notesInChord, tempo);
-    console.log(notesInChord);
+    const bassNote = `${chordRoot}${octave - 1}`;
+    notesInChord.unshift(bassNote);
 
-    onPlayChord(notesInChord);
+    switch (playMethod) {
+      case "playChord":
+        SoundEngine.playChord(notesInChord, dispatch);
+        break;
+      case "playArpeggio":
+        SoundEngine.playArpeggio(notesInChord, tempoRef.current, dispatch);
+        break;
+      case "playInvertedChord":
+        SoundEngine.playInvertedChord(notesInChord, dispatch);
+        break;
+      default:
+        break;
+    }
+
+    console.log(notesInChord);
     chordIndexRef.current =
       (chordIndexRef.current + 1) % chordsRef.current.length;
   };
 
   useEffect(() => {
     if (isPlaying) {
-      Tone.Transport.scheduleRepeat(playNextChord, "1m");
+      Tone.Transport.scheduleRepeat(playNextChord, "1n");
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
@@ -51,7 +68,7 @@ const ChordLooper = ({
   }, [isPlaying]);
 
   const handleClick = () => {
-    setIsPlaying((prevIsPlaying) => !prevIsPlaying);
+    dispatch(setIsPlaying(!isPlaying));
   };
 
   return (
@@ -59,6 +76,14 @@ const ChordLooper = ({
       <button onClick={handleClick}>
         {isPlaying ? "Stop Loop" : "Start Loop"}
       </button>
+      <select
+        value={playMethod}
+        onChange={(e) => setPlayMethod(e.target.value)}
+      >
+        <option value="playChord">Play Chord</option>
+        <option value="playArpeggio">Play Arpeggio</option>
+        <option value="playInvertedChord">Play Inverted Chord</option>
+      </select>
     </div>
   );
 };

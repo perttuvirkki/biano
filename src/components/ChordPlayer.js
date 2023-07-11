@@ -1,18 +1,22 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
+import { setChordPlayerSettings } from "../redux/slices/chordPlayerSettingsSlice";
 
-const ChordPlayer = ({
-  chordRoot,
-  chordType,
-  octave,
-  onPlayChord,
-  onChordChange,
-}) => {
+const ChordPlayer = ({ octave, index }) => {
+  const dispatch = useDispatch();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const chordRoots = ["C", "D", "E", "F", "G", "A", "B"];
   const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7", "6", "9"];
+
+  const chordRoot = useSelector(
+    (state) => state.chordPlayerSettings[index].chordRoot
+  );
+  const chordType = useSelector(
+    (state) => state.chordPlayerSettings[index].chordType
+  );
 
   const playChord = () => {
     const chordName = `${chordRoot}${chordType}`;
@@ -23,8 +27,10 @@ const ChordPlayer = ({
       transpose(`${chordRoot}${octave}`, interval)
     );
 
-    SoundEngine.playChord(notesInChord, octave);
-    onPlayChord(notesInChord);
+    const bassNote = `${chordRoot}${octave - 1}`;
+    notesInChord.unshift(bassNote);
+
+    SoundEngine.playInvertedChord(notesInChord, dispatch);
     setTimeout(() => setIsPlaying(false), 2000);
   };
 
@@ -33,11 +39,21 @@ const ChordPlayer = ({
   };
 
   const handleChordRootChange = (event) => {
-    onChordChange({ chordRoot: event.target.value, chordType });
+    dispatch(
+      setChordPlayerSettings({
+        index,
+        settings: { chordRoot: event.target.value, chordType },
+      })
+    );
   };
 
   const handleChordTypeChange = (event) => {
-    onChordChange({ chordRoot, chordType: event.target.value });
+    dispatch(
+      setChordPlayerSettings({
+        index,
+        settings: { chordRoot, chordType: event.target.value },
+      })
+    );
   };
 
   return (
