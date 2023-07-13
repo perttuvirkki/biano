@@ -4,19 +4,24 @@ import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
 import { Sampler, start } from "tone";
 import * as Tone from "tone";
 
-const lengthOfNote = 2500;
-let timeIndex = 0;
-let sprite = {};
+const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
-for (let i = 24; i <= 108; i++) {
-  sprite[`Note${i}`] = [timeIndex, lengthOfNote];
-  timeIndex += lengthOfNote;
+let pianoSounds = {};
+
+for (let octave = 1; octave <= 7; octave++) {
+  for (let i = 0; i < notes.length; i++) {
+    let note = notes[i];
+    let noteWithOctave = `${note}${octave}`;
+    let midiNote = Note.midi(noteWithOctave);
+    if (midiNote) {
+      pianoSounds[noteWithOctave] = new Sampler({
+        urls: {
+          C4: `./assets/notes/${noteWithOctave}.mp3`,
+        },
+      }).toDestination();
+    }
+  }
 }
-
-const sound = new Howl({
-  src: ["./assets/steinway-grand-piano.mp3"],
-  sprite: sprite,
-});
 
 const drumSounds = {
   bassDrum: new Sampler({
@@ -36,10 +41,17 @@ const drumSounds = {
   }),
 };
 
+const drumKeys = new Tone.Players({
+  urls: {
+    0: "./assets/bassdrum.mp3",
+    1: "./assets/snare.mp3",
+    2: "./assets/hihat.mp3",
+  },
+}).toDestination();
+
 const SoundEngine = {
   playNote: (note) => {
-    let spriteName = `Note${Note.midi(note)}`;
-    sound.play(spriteName);
+    pianoSounds[note].triggerAttackRelease("C4", "1m");
   },
   playChord: (notesInChord, dispatch) => {
     dispatch(setHighlightedChord(notesInChord));
@@ -106,6 +118,7 @@ const SoundEngine = {
     invertedChord.forEach((note) => {
       SoundEngine.playNote(note);
     });
+    console.log(Tone.context.sampleRate);
   },
 
   playDrumSound: (soundName) => {
