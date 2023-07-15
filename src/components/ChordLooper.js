@@ -53,7 +53,6 @@ const ChordLooper = () => {
         break;
     }
 
-    console.log(notesInChord);
     chordIndexRef.current =
       (chordIndexRef.current + 1) % chordsRef.current.length;
   };

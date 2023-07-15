@@ -6,7 +6,6 @@ const PianoKey = forwardRef(({ noteImport, isBlack, keyIndex }, ref) => {
   const [isActive, setIsActive] = useState(false);
   const highlightedChord = useSelector((state) => state.highlightedChord);
   const isHighlighted = highlightedChord.includes(noteImport);
-
   const handleMouseDown = () => {
     setIsActive(true);
     SoundEngine.playNote(noteImport);
@@ -29,7 +28,7 @@ const PianoKey = forwardRef(({ noteImport, isBlack, keyIndex }, ref) => {
       ref={ref}
     >
       <span style={{ position: "relative", bottom: "-40%" }}>
-        {noteImport.startsWith("C") && !noteImport.includes("#")
+        {noteImport.startsWith("C") && !noteImport.includes("s")
           ? noteImport
           : ""}
       </span>

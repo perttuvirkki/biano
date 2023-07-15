@@ -1,10 +1,9 @@
-import { Howl } from "howler";
 import { Note } from "tonal";
 import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
 import { Sampler, start } from "tone";
 import * as Tone from "tone";
 
-const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
 
 let pianoSounds = {};
 
@@ -12,14 +11,12 @@ for (let octave = 1; octave <= 7; octave++) {
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
     let noteWithOctave = `${note}${octave}`;
-    let midiNote = Note.midi(noteWithOctave);
-    if (midiNote) {
-      pianoSounds[noteWithOctave] = new Sampler({
-        urls: {
-          C4: `./assets/notes/${noteWithOctave}.mp3`,
-        },
-      }).toDestination();
-    }
+
+    pianoSounds[noteWithOctave] = new Sampler({
+      urls: {
+        C4: `./assets/notes/${noteWithOctave}.mp3`,
+      },
+    }).toDestination();
   }
 }
 
@@ -41,14 +38,6 @@ const drumSounds = {
   }),
 };
 
-const drumKeys = new Tone.Players({
-  urls: {
-    0: "./assets/bassdrum.mp3",
-    1: "./assets/snare.mp3",
-    2: "./assets/hihat.mp3",
-  },
-}).toDestination();
-
 const SoundEngine = {
   playNote: (note) => {
     pianoSounds[note].triggerAttackRelease("C4", "1m");
@@ -60,12 +49,12 @@ const SoundEngine = {
     });
   },
   playArpeggio: (notesInChord, tempo, dispatch) => {
-    const beatDurationInMilliseconds = (60000 / tempo) * 2; // Duration of a beat in milliseconds
+    const beatDurationInMilliseconds = (60000 / tempo) * 2;
     let delay = 0;
     if (notesInChord.length === 4) {
-      delay = beatDurationInMilliseconds / (notesInChord.length - 1); // Delay between each note
+      delay = beatDurationInMilliseconds / (notesInChord.length - 1);
     } else {
-      delay = beatDurationInMilliseconds / (notesInChord.length - 1); // Delay between each note
+      delay = beatDurationInMilliseconds / (notesInChord.length - 1);
     }
 
     notesInChord.forEach((note, index) => {
@@ -90,13 +79,10 @@ const SoundEngine = {
     let noteToModify;
 
     if (random < 0.33) {
-      // 1/3 chance to not mutate the chord
       noteToModify = null;
     } else if (random < 0.66) {
-      // 1/3 chance to transpose the second note up by one octave
       noteToModify = 1;
     } else {
-      // 1/3 chance to transpose the last note down by one octave
       noteToModify = 3;
     }
 
@@ -118,7 +104,6 @@ const SoundEngine = {
     invertedChord.forEach((note) => {
       SoundEngine.playNote(note);
     });
-    console.log(Tone.context.sampleRate);
   },
 
   playDrumSound: (soundName) => {

@@ -9,16 +9,16 @@ const Piano = () => {
   const octaves = [...Array(7).keys()].map((n) => n + 1);
   const notes = [
     "C",
-    "C#",
+    "Cs",
     "D",
-    "D#",
+    "Ds",
     "E",
     "F",
-    "F#",
+    "Fs",
     "G",
-    "G#",
+    "Gs",
     "A",
-    "A#",
+    "As",
     "B",
   ];
 
@@ -74,7 +74,7 @@ const Piano = () => {
       <div className="piano">
         {octaves.map((octave) =>
           notes.map((note, index) => {
-            const isBlack = note.includes("#");
+            const isBlack = note.includes("s");
             if (!isBlack) {
               whiteKeyIndex++;
             }

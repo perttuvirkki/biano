@@ -5,7 +5,7 @@ const DrumProgressBar = () => {
 
   return (
     <div className="drum-progress-bar">
-      {Array.from({ length: 8 }, (_, i) => (
+      {Array.from({ length: 16 }, (_, i) => (
         <div key={i} className={`beat ${i === currentBeat ? "active" : ""}`} />
       ))}
     </div>
