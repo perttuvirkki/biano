@@ -4,6 +4,7 @@ import { transpose, Chord } from "tonal";
 import SoundEngine from "./SoundEngine";
 import * as Tone from "tone";
 import { setCurrentBeat } from "../redux/slices/currentBeatSlice";
+import { setDrumCurrentBeat } from "../redux/slices/drumCurrentBeatSlice";
 import { setIsPlaying } from "../redux/slices/isPlayingSlice";
 
 const ChordLooper = () => {
@@ -67,6 +68,10 @@ const ChordLooper = () => {
   }, [isPlaying]);
 
   const handleClick = () => {
+    if (isPlaying) {
+      dispatch(setCurrentBeat(0));
+      dispatch(setDrumCurrentBeat(0));
+    }
     dispatch(setIsPlaying(!isPlaying));
   };
 
