@@ -28,10 +28,15 @@ const App = () => {
   const [showApp, setShowApp] = useState(false);
 
   useEffect(() => {
-    loadAllAssets().then(() => {
-      setAssetsLoaded(true);
-      Tone.start();
-    });
+    loadAllAssets()
+      .then(() => {
+        setAssetsLoaded(true);
+        Tone.start();
+      })
+      .catch((error) => {
+        console.error("Error loading assets:", error);
+        // Handle the error appropriately, e.g., show an error message to the user
+      });
   }, []);
 
   useEffect(() => {
