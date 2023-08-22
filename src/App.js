@@ -35,7 +35,6 @@ const App = () => {
       })
       .catch((error) => {
         console.error("Error loading assets:", error);
-        // Handle the error appropriately, e.g., show an error message to the user
       });
   }, []);
 

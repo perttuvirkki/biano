@@ -1,9 +1,27 @@
 import { Note } from "tonal";
 import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
-import { Sampler, start } from "tone";
+import { Sampler, ToneAudioBuffer } from "tone";
 import * as Tone from "tone";
 
 const notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
+
+const drumSounds = {
+  bassDrum: new Sampler({
+    urls: {
+      C4: "./assets/bassdrum.mp3",
+    },
+  }).toDestination(),
+  snare: new Sampler({
+    urls: {
+      C4: "./assets/snare.mp3",
+    },
+  }).toDestination(),
+  hiHat: new Sampler({
+    urls: {
+      C4: "./assets/hihat.mp3",
+    },
+  }).toDestination(),
+};
 
 let pianoSounds = {};
 
@@ -21,48 +39,8 @@ for (let octave = 1; octave <= 7; octave++) {
 }
 
 export function loadAllAssets() {
-  let assetPromises = [];
-
-  for (let octave = 1; octave <= 7; octave++) {
-    for (let i = 0; i < notes.length; i++) {
-      let note = notes[i];
-      let noteWithOctave = `${note}${octave}`;
-
-      const sampler = new Sampler({
-        urls: {
-          C4: `./assets/notes/${noteWithOctave}.mp3`,
-        },
-      }).toDestination();
-
-      assetPromises.push(sampler.loaded);
-    }
-  }
-
-  const drumKeys = Object.keys(drumSounds);
-  drumKeys.forEach((key) => {
-    assetPromises.push(drumSounds[key].loaded);
-  });
-
-  return Promise.all(assetPromises);
+  return ToneAudioBuffer.loaded();
 }
-
-const drumSounds = {
-  bassDrum: new Sampler({
-    urls: {
-      C4: "./assets/bassdrum.mp3",
-    },
-  }),
-  snare: new Sampler({
-    urls: {
-      C4: "./assets/snare.mp3",
-    },
-  }),
-  hiHat: new Sampler({
-    urls: {
-      C4: "./assets/hihat.mp3",
-    },
-  }),
-};
 
 const SoundEngine = {
   playNote: (note) => {
