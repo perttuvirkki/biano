@@ -89,11 +89,16 @@ const App = () => {
     dispatch(setTempo(event.target.value));
   };
 
+  const startApp = (event) => {
+    Tone.start();
+    setShowApp(true);
+  };
+
   if (!showApp) {
     return (
       <div className="loading-screen">
         {assetsLoaded ? (
-          <button onClick={() => setShowApp(true)}>Lets Play!</button>
+          <button onClick={() => startApp()}>Lets Play!</button>
         ) : (
           <p>Loading assets...</p>
         )}

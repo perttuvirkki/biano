@@ -39,7 +39,13 @@ for (let octave = 1; octave <= 7; octave++) {
 }
 
 export function loadAllAssets() {
-  return ToneAudioBuffer.loaded();
+  return ToneAudioBuffer.loaded()
+    .then(() => {
+      console.log("All assets loaded");
+    })
+    .catch((error) => {
+      console.error("Error loading assets:", error);
+    });
 }
 
 const SoundEngine = {
