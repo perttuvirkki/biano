@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Tone from "tone";
 import { useDispatch, useSelector } from "react-redux";
 import { clearHighlightedChord } from "./redux/slices/highlightedChordSlice";
@@ -6,6 +6,7 @@ import { setChordPlayerSettings } from "./redux/slices/chordPlayerSettingsSlice"
 import { setCurrentBeat } from "./redux/slices/currentBeatSlice";
 import { setIsPlaying } from "./redux/slices/isPlayingSlice";
 import { setTempo } from "./redux/slices/tempoSlice";
+import SoundEngine, { loadAllAssets } from "./components/SoundEngine";
 
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
@@ -22,6 +23,15 @@ const App = () => {
   const isPlaying = useSelector((state) => state.isPlaying);
   const tempo = useSelector((state) => state.tempo);
   const tempoRef = useRef(tempo);
+
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [showApp, setShowApp] = useState(false);
+
+  useEffect(() => {
+    loadAllAssets().then(() => {
+      setAssetsLoaded(true);
+    });
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -74,6 +84,17 @@ const App = () => {
     dispatch(setTempo(event.target.value));
   };
 
+  if (!showApp) {
+    return (
+      <div className="loading-screen">
+        {assetsLoaded ? (
+          <button onClick={() => setShowApp(true)}>Lets Play!</button>
+        ) : (
+          <p>Loading assets...</p>
+        )}
+      </div>
+    );
+  }
   return (
     <div className="app">
       <DrumMachine isPlaying={isPlaying} />
