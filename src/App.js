@@ -30,6 +30,7 @@ const App = () => {
   useEffect(() => {
     loadAllAssets().then(() => {
       setAssetsLoaded(true);
+      Tone.start();
     });
   }, []);
 

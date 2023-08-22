@@ -21,10 +21,8 @@ for (let octave = 1; octave <= 7; octave++) {
 }
 
 export function loadAllAssets() {
-  // Create an array to hold all the promises
   let assetPromises = [];
 
-  // Load piano sounds
   for (let octave = 1; octave <= 7; octave++) {
     for (let i = 0; i < notes.length; i++) {
       let note = notes[i];
@@ -36,18 +34,15 @@ export function loadAllAssets() {
         },
       }).toDestination();
 
-      // Push the loaded promise of each sampler to the array
       assetPromises.push(sampler.loaded);
     }
   }
 
-  // Load drum sounds
   const drumKeys = Object.keys(drumSounds);
   drumKeys.forEach((key) => {
     assetPromises.push(drumSounds[key].loaded);
   });
 
-  // Return a single promise that resolves when all assets are loaded
   return Promise.all(assetPromises);
 }
 
