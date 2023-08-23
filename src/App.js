@@ -24,18 +24,21 @@ const App = () => {
   const tempoRef = useRef(tempo);
 
   const [assetsLoaded, setAssetsLoaded] = useState(false);
-  const [showApp, setShowApp] = useState(false);
+  const [audioStarted, setAudioStarted] = useState(false);
 
-  useEffect(() => {
-    Tone.loaded()
+  const startAudioAndLoadAssets = () => {
+    Tone.start()
+      .then(() => {
+        setAudioStarted(true);
+        return Tone.loaded();
+      })
       .then(() => {
         setAssetsLoaded(true);
-        Tone.start();
       })
       .catch((error) => {
         console.error("Error loading assets:", error);
       });
-  }, []);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -58,7 +61,6 @@ const App = () => {
 
   useEffect(() => {
     if (isPlaying) {
-      Tone.start();
       Tone.Transport.bpm.value = tempoRef.current;
 
       Tone.Transport.start();
@@ -88,19 +90,18 @@ const App = () => {
     dispatch(setTempo(event.target.value));
   };
 
-  const startApp = (event) => {
-    Tone.start();
-    setShowApp(true);
-  };
-
-  if (!showApp) {
+  if (!audioStarted) {
     return (
       <div className="loading-screen">
-        {assetsLoaded ? (
-          <button onClick={() => startApp()}>Lets Play!</button>
-        ) : (
-          <p>Loading assets...</p>
-        )}
+        <button onClick={startAudioAndLoadAssets}>Lets Play!</button>
+      </div>
+    );
+  }
+
+  if (audioStarted && !assetsLoaded) {
+    return (
+      <div className="loading-screen">
+        <p>Loading assets...</p>
       </div>
     );
   }

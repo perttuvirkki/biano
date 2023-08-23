@@ -18,6 +18,7 @@ for (let octave = 1; octave <= 7; octave++) {
     });
   }
 }
+
 drumSounds = {
   bassDrum: new Sampler({
     urls: {
