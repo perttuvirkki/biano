@@ -6,6 +6,7 @@ import { setChordPlayerSettings } from "./redux/slices/chordPlayerSettingsSlice"
 import { setCurrentBeat } from "./redux/slices/currentBeatSlice";
 import { setIsPlaying } from "./redux/slices/isPlayingSlice";
 import { setTempo } from "./redux/slices/tempoSlice";
+import { ReactComponent as PianoSVG } from "./piano_svg.svg"; // Import as a React component
 
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
@@ -93,7 +94,8 @@ const App = () => {
   if (!audioStarted) {
     return (
       <div className="loading-screen">
-        <button class="enter-button" onClick={startAudioAndLoadAssets}>
+        <PianoSVG className="piano-svg" />{" "}
+        <button className="enter-button" onClick={startAudioAndLoadAssets}>
           Lets Play!
         </button>
       </div>

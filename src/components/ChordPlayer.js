@@ -8,7 +8,20 @@ const ChordPlayer = ({ octave, index }) => {
   const dispatch = useDispatch();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const chordRoots = ["C", "D", "E", "F", "G", "A", "B"];
+  const chordRoots = [
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B",
+  ];
   const chordTypes = ["maj", "min", "dim", "7", "maj7", "min7", "6", "9"];
 
   const chordRoot = useSelector(
@@ -17,6 +30,24 @@ const ChordPlayer = ({ octave, index }) => {
   const chordType = useSelector(
     (state) => state.chordPlayerSettings[index].chordType
   );
+
+  function sharpToFlat(note) {
+    return note
+      .replace(/C##/g, "D")
+      .replace(/D##/g, "E")
+      .replace(/E##/g, "F#")
+      .replace(/F##/g, "G")
+      .replace(/G##/g, "A")
+      .replace(/A##/g, "B")
+      .replace(/B##/g, "C#")
+      .replace(/C#/g, "Db")
+      .replace(/D#/g, "Eb")
+      .replace(/E#/g, "F")
+      .replace(/F#/g, "Gb")
+      .replace(/G#/g, "Ab")
+      .replace(/A#/g, "Bb")
+      .replace(/B#/g, "C");
+  }
 
   const playChord = () => {
     const chordName = `${chordRoot}${chordType}`;
@@ -28,9 +59,13 @@ const ChordPlayer = ({ octave, index }) => {
     );
     const bassNote = `${chordRoot}${octave - 1}`;
     notesInChord.unshift(bassNote);
-    console.log(notesInChord);
 
-    SoundEngine.playInvertedChord(notesInChord, dispatch);
+    console.log("chord: " + notesInChord);
+    // Convert sharp notes to flat notes
+    const flatNotesInChord = notesInChord.map(sharpToFlat);
+    console.log("flatnotes: " + flatNotesInChord);
+
+    SoundEngine.playInvertedChord(flatNotesInChord, dispatch);
     setTimeout(() => setIsPlaying(false), 2000);
   };
 
