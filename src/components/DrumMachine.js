@@ -45,6 +45,8 @@ const DrumMachine = () => {
   }, [isPlaying, beatCount]);
 
   const toggleBeat = (soundName, beat) => {
+    SoundEngine.playDrumSound(soundName);
+
     setBeatMatrix((prevMatrix) => {
       const currentBeatState = prevMatrix[soundName][beat];
       const nextBeatState = prevMatrix[soundName][beat + 1];

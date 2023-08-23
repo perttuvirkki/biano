@@ -1,44 +1,43 @@
 import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
 import { Sampler } from "tone";
-import * as Tone from "tone";
 
 const notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
 
 let pianoSounds = {};
 let drumSounds = {};
 
-export function loadAllAssets() {
-  for (let octave = 1; octave <= 7; octave++) {
-    for (let i = 0; i < notes.length; i++) {
-      let note = notes[i];
-      let noteWithOctave = `${note}${octave}`;
+for (let octave = 1; octave <= 7; octave++) {
+  for (let i = 0; i < notes.length; i++) {
+    let note = notes[i];
+    let noteWithOctave = `${note}${octave}`;
 
-      pianoSounds[noteWithOctave] = new Sampler({
-        urls: {
-          C4: `./assets/notes/${noteWithOctave}.mp3`,
-        },
-      });
-    }
+    pianoSounds[noteWithOctave] = new Sampler({
+      urls: {
+        C4: `./assets/notes/${noteWithOctave}.mp3`,
+      },
+    });
   }
-  drumSounds = {
-    bassDrum: new Sampler({
-      urls: {
-        C4: "./assets/bassdrum.mp3",
-      },
-    }),
-    snare: new Sampler({
-      urls: {
-        C4: "./assets/snare.mp3",
-      },
-    }),
-    hiHat: new Sampler({
-      urls: {
-        C4: "./assets/hihat.mp3",
-      },
-    }),
-  };
-  return Tone.loaded();
 }
+drumSounds = {
+  bassDrum: new Sampler({
+    urls: {
+      C4: "./assets/bassdrum.mp3",
+    },
+    volume: -2,
+  }),
+  snare: new Sampler({
+    urls: {
+      C4: "./assets/snare.mp3",
+    },
+    volume: -2,
+  }),
+  hiHat: new Sampler({
+    urls: {
+      C4: "./assets/hihat.mp3",
+    },
+    volume: -2,
+  }),
+};
 
 const SoundEngine = {
   playNote: (note) => {

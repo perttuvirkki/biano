@@ -6,7 +6,6 @@ import { setChordPlayerSettings } from "./redux/slices/chordPlayerSettingsSlice"
 import { setCurrentBeat } from "./redux/slices/currentBeatSlice";
 import { setIsPlaying } from "./redux/slices/isPlayingSlice";
 import { setTempo } from "./redux/slices/tempoSlice";
-import { loadAllAssets } from "./components/SoundEngine";
 
 import Piano from "./components/Piano";
 import ChordPlayer from "./components/ChordPlayer";
@@ -28,7 +27,7 @@ const App = () => {
   const [showApp, setShowApp] = useState(false);
 
   useEffect(() => {
-    loadAllAssets()
+    Tone.loaded()
       .then(() => {
         setAssetsLoaded(true);
         Tone.start();
