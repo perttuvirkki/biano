@@ -1,8 +1,7 @@
 import { setHighlightedChord } from "../redux/slices/highlightedChordSlice";
 import { Sampler } from "tone";
 
-const notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
-
+const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 let pianoSounds = {};
 let drumSounds = {};
 

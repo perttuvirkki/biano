@@ -28,7 +28,7 @@ const PianoKey = forwardRef(({ noteImport, isBlack, keyIndex }, ref) => {
       ref={ref}
     >
       <span style={{ position: "relative", bottom: "-40%" }}>
-        {noteImport.startsWith("C") && !noteImport.includes("s")
+        {noteImport.startsWith("C") && !noteImport.includes("b")
           ? noteImport
           : ""}
       </span>

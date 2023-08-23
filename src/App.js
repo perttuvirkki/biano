@@ -93,7 +93,9 @@ const App = () => {
   if (!audioStarted) {
     return (
       <div className="loading-screen">
-        <button onClick={startAudioAndLoadAssets}>Lets Play!</button>
+        <button class="enter-button" onClick={startAudioAndLoadAssets}>
+          Lets Play!
+        </button>
       </div>
     );
   }

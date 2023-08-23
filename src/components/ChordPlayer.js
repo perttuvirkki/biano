@@ -26,9 +26,9 @@ const ChordPlayer = ({ octave, index }) => {
     const notesInChord = intervals.map((interval) =>
       transpose(`${chordRoot}${octave}`, interval)
     );
-
     const bassNote = `${chordRoot}${octave - 1}`;
     notesInChord.unshift(bassNote);
+    console.log(notesInChord);
 
     SoundEngine.playInvertedChord(notesInChord, dispatch);
     setTimeout(() => setIsPlaying(false), 2000);

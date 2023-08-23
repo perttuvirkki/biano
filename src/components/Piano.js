@@ -9,27 +9,18 @@ const Piano = () => {
   const octaves = [...Array(7).keys()].map((n) => n + 1);
   const notes = [
     "C",
-    "Cs",
+    "Db",
     "D",
-    "Ds",
+    "Eb",
     "E",
     "F",
-    "Fs",
+    "Gb",
     "G",
-    "Gs",
+    "Ab",
     "A",
-    "As",
+    "Bb",
     "B",
   ];
-
-  function flatToSharp(note) {
-    return note
-      .replace(/Db/g, "C#")
-      .replace(/Eb/g, "D#")
-      .replace(/Gb/g, "F#")
-      .replace(/Ab/g, "G#")
-      .replace(/Bb/g, "A#");
-  }
 
   const refs = {};
 
@@ -52,8 +43,7 @@ const Piano = () => {
 
       const meanNote = Note.fromFreq(meanFrequency);
 
-      flatToSharp(meanNote);
-      refs[flatToSharp(meanNote)]?.current?.scrollIntoView({
+      refs[meanNote]?.current?.scrollIntoView({
         behavior: "smooth",
         block: "center",
         inline: "center",
@@ -74,7 +64,7 @@ const Piano = () => {
       <div className="piano">
         {octaves.map((octave) =>
           notes.map((note, index) => {
-            const isBlack = note.includes("s");
+            const isBlack = note.includes("b");
             if (!isBlack) {
               whiteKeyIndex++;
             }
