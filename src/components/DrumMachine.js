@@ -39,6 +39,8 @@ const DrumMachine = () => {
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
+      beatIndexRef.current = 0; // Reset the beat index to 0
+      dispatch(setDrumCurrentBeat(0)); // Reset the drum current beat to 0
     }
   }, [isPlaying, beatCount]);
 
@@ -66,7 +68,6 @@ const DrumMachine = () => {
         }),
       };
     });
-    console.log(beatMatrix);
   };
 
   return (

@@ -71,6 +71,7 @@ const ChordLooper = () => {
     if (isPlaying) {
       dispatch(setCurrentBeat(0));
       dispatch(setDrumCurrentBeat(0));
+      chordIndexRef.current = 0;
     }
     dispatch(setIsPlaying(!isPlaying));
   };
