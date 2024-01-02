@@ -94,7 +94,8 @@ const App = () => {
   if (!audioStarted) {
     return (
       <div className="loading-screen">
-        <PianoSVG className="piano-svg" />{" "}
+        <PianoSVG className="piano-svg" />
+        <br />
         <button className="enter-button" onClick={startAudioAndLoadAssets}>
           Lets Play!
         </button>
@@ -116,21 +117,10 @@ const App = () => {
       <Piano highlightedChord={highlightedChord} />
       <div className="chord-players-container">
         {chordPlayerSettings.map((settings, index) => (
-          <ChordPlayer
-            {...settings}
-            octave="4"
-            onChordChange={(newSettings) =>
-              handleChordChange(index, newSettings)
-            }
-            key={index}
-            index={index}
-          />
+          <ChordPlayer {...settings} octave="4" onChordChange={(newSettings) => handleChordChange(index, newSettings)} key={index} index={index} />
         ))}
       </div>
-      <ProgressBar
-        currentBeat={currentBeat}
-        totalBeats={chordPlayerSettings.length}
-      />
+      <ProgressBar currentBeat={currentBeat} totalBeats={chordPlayerSettings.length} />
       <ChordLooper
         octave="3"
         chords={chordPlayerSettings}
@@ -139,13 +129,7 @@ const App = () => {
         setIsPlaying={(playing) => dispatch(setIsPlaying(playing))}
         tempo={tempoRef.current}
       />
-      <input
-        type="range"
-        min="60"
-        max="180"
-        value={tempo}
-        onChange={handleTempoChange}
-      />
+      <input type="range" min="60" max="180" value={tempo} onChange={handleTempoChange} />
       <span>{tempo} BPM</span>
     </div>
   );

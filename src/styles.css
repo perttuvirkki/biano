@@ -173,22 +173,20 @@
 }
 
 .enter-button {
-  background-color: gray; /* Green background */
-  border: none; /* Remove borders */
-  color: white; /* White text */
+  width: 120px;
+  border: 2px solid black; /* Remove borders */
   padding: 15px 32px; /* Padding */
   text-align: center; /* Center text */
   font-size: 16px; /* Text size */
   margin: 4px 2px; /* Some margin */
   cursor: pointer; /* Pointer/hand icon */
-  border-radius: 12px; /* Rounded corners */
-  transition: background-color 0.3s, transform 0.3s; /* Transition for hover effects */
+  border-radius: 50px; /* Rounded corners */
 }
 
 /* Hover effect */
 .enter-button:hover {
+  color: white;
   background-color: #007bff; /* Darker green */
-  transform: scale(1.05); /* Slightly larger */
 }
 
 /* Active effect */

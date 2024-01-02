@@ -24,6 +24,24 @@ const ChordLooper = () => {
     tempoRef.current = tempo;
   }, [chords, tempo]);
 
+  function sharpToFlat(note) {
+    return note
+      .replace(/C##/g, "D")
+      .replace(/D##/g, "E")
+      .replace(/E##/g, "F#")
+      .replace(/F##/g, "G")
+      .replace(/G##/g, "A")
+      .replace(/A##/g, "B")
+      .replace(/B##/g, "C#")
+      .replace(/C#/g, "Db")
+      .replace(/D#/g, "Eb")
+      .replace(/E#/g, "F")
+      .replace(/F#/g, "Gb")
+      .replace(/G#/g, "Ab")
+      .replace(/A#/g, "Bb")
+      .replace(/B#/g, "C");
+  }
+
   const playNextChord = () => {
     if (!chordsRef.current[chordIndexRef.current]) {
       return;
@@ -34,28 +52,27 @@ const ChordLooper = () => {
     const chordName = `${chordRoot}${chordType}`;
 
     const { intervals } = Chord.get(chordName);
-    const notesInChord = intervals.map((interval) =>
-      transpose(`${chordRoot}${octave}`, interval)
-    );
+    const notesInChord = intervals.map((interval) => transpose(`${chordRoot}${octave}`, interval));
     const bassNote = `${chordRoot}${octave - 1}`;
     notesInChord.unshift(bassNote);
 
+    const flatNotesInChord = notesInChord.map((note) => sharpToFlat(note));
+
     switch (playMethod) {
       case "playChord":
-        SoundEngine.playChord(notesInChord, dispatch);
+        SoundEngine.playChord(flatNotesInChord, dispatch);
         break;
       case "playArpeggio":
-        SoundEngine.playArpeggio(notesInChord, tempoRef.current, dispatch);
+        SoundEngine.playArpeggio(flatNotesInChord, tempoRef.current, dispatch);
         break;
       case "playInvertedChord":
-        SoundEngine.playInvertedChord(notesInChord, dispatch);
+        SoundEngine.playInvertedChord(flatNotesInChord, dispatch);
         break;
       default:
         break;
     }
 
-    chordIndexRef.current =
-      (chordIndexRef.current + 1) % chordsRef.current.length;
+    chordIndexRef.current = (chordIndexRef.current + 1) % chordsRef.current.length;
   };
 
   useEffect(() => {
@@ -78,13 +95,8 @@ const ChordLooper = () => {
 
   return (
     <div>
-      <button onClick={handleClick}>
-        {isPlaying ? "Stop Loop" : "Start Loop"}
-      </button>
-      <select
-        value={playMethod}
-        onChange={(e) => setPlayMethod(e.target.value)}
-      >
+      <button onClick={handleClick}>{isPlaying ? "Stop Loop" : "Start Loop"}</button>
+      <select value={playMethod} onChange={(e) => setPlayMethod(e.target.value)}>
         <option value="playChord">Play Chord</option>
         <option value="playArpeggio">Play Arpeggio</option>
         <option value="playInvertedChord">Play Inverted Chord</option>
